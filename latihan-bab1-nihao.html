@@ -1,0 +1,722 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>第一课 你好 — Latihan Bab 1</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@400;600;700&family=Ma+Shan+Zheng&family=Spectral:ital,wght@0,400;0,500;0,600;1,400&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --paper:#F3ECDC;
+    --paper-soft:#EAE1CB;
+    --ink:#2A2420;
+    --ink-soft:#5B5147;
+    --ink-faint:#9A8E78;
+    --seal:#B3382C;
+    --seal-dark:#8C2A20;
+    --bamboo:#5F7A5C;
+    --line:#D3C3A0;
+    --cream:#FBF7EC;
+  }
+  *{box-sizing:border-box;}
+  html,body{margin:0;padding:0;}
+  body{
+    background:var(--paper);
+    background-image:
+      radial-gradient(circle at 15% 8%, rgba(91,122,92,0.05), transparent 40%),
+      radial-gradient(circle at 85% 92%, rgba(179,56,44,0.05), transparent 40%);
+    color:var(--ink);
+    font-family:'Inter', sans-serif;
+    -webkit-font-smoothing:antialiased;
+    min-height:100vh;
+  }
+  .hanzi{font-family:'Noto Serif SC', serif;}
+  .brush{font-family:'Ma Shan Zheng', cursive;}
+  .serif{font-family:'Spectral', serif;}
+
+  /* ---------- top bar ---------- */
+  .topbar{
+    position:sticky; top:0; z-index:50;
+    background:rgba(243,236,220,0.92);
+    backdrop-filter:blur(6px);
+    border-bottom:1px solid var(--line);
+  }
+  .topbar-inner{
+    max-width:880px; margin:0 auto; padding:14px 20px;
+    display:flex; align-items:center; justify-content:space-between; gap:16px;
+  }
+  .brandblock{display:flex; align-items:baseline; gap:10px;}
+  .brandblock .hanzi{font-size:1.4rem; font-weight:700; letter-spacing:1px;}
+  .brandblock .sub{font-size:0.72rem; color:var(--ink-soft); letter-spacing:0.04em;}
+  .seal-wrap{display:flex; align-items:center; gap:10px;}
+  .seal{
+    width:46px; height:46px; flex:none;
+    background:var(--seal);
+    color:var(--cream);
+    display:flex; align-items:center; justify-content:center;
+    font-family:'Noto Serif SC', serif; font-weight:700; font-size:1.3rem;
+    border-radius:5px;
+    box-shadow:0 1px 0 rgba(0,0,0,0.15) inset, 0 2px 5px rgba(140,42,32,0.35);
+    transform:rotate(-3deg);
+    transition:transform 0.35s cubic-bezier(.34,1.56,.64,1);
+  }
+  .seal.stamped{transform:rotate(-3deg) scale(1.28);}
+  .score-text{font-size:0.78rem; color:var(--ink-soft); line-height:1.25;}
+  .score-text b{color:var(--ink); font-size:0.95rem;}
+
+  /* ---------- nav tabs ---------- */
+  .tabs{
+    max-width:880px; margin:0 auto; padding:0 20px 12px;
+    display:flex; gap:8px; overflow-x:auto;
+  }
+  .tab-btn{
+    flex:none;
+    font-family:'Inter', sans-serif; font-size:0.82rem; font-weight:600;
+    padding:7px 14px; border-radius:999px;
+    border:1px solid var(--line); background:var(--cream);
+    color:var(--ink-soft); cursor:pointer;
+    transition:all .15s ease;
+    white-space:nowrap;
+  }
+  .tab-btn:hover{border-color:var(--ink-faint);}
+  .tab-btn.active{background:var(--ink); color:var(--cream); border-color:var(--ink);}
+  .tab-btn:focus-visible{outline:2px solid var(--seal); outline-offset:2px;}
+
+  /* ---------- layout ---------- */
+  main{max-width:880px; margin:0 auto; padding:28px 20px 80px;}
+  .intro{
+    border:1px solid var(--line); background:var(--cream);
+    border-radius:8px; padding:18px 20px; margin-bottom:24px;
+    font-size:0.88rem; color:var(--ink-soft); line-height:1.55;
+  }
+  .intro b{color:var(--ink);}
+
+  .panel{display:none;}
+  .panel.active{display:block; animation:fadein .25s ease;}
+  @keyframes fadein{from{opacity:0; transform:translateY(4px);} to{opacity:1; transform:none;}}
+
+  .section-head{
+    display:flex; align-items:center; gap:10px; margin-bottom:6px;
+  }
+  .section-head .num{
+    font-family:'Noto Serif SC',serif; font-weight:700; font-size:1.05rem;
+    color:var(--seal); border:1.5px solid var(--seal); border-radius:50%;
+    width:30px; height:30px; display:flex; align-items:center; justify-content:center; flex:none;
+  }
+  .section-head h2{font-family:'Spectral',serif; font-size:1.25rem; margin:0; font-weight:600;}
+  .section-head .hanzi-tag{font-size:0.95rem; color:var(--ink-faint); margin-left:auto;}
+  .section-desc{font-size:0.85rem; color:var(--ink-soft); margin:6px 0 20px; line-height:1.5;}
+
+  .card{
+    border:1px solid var(--line); background:var(--cream);
+    border-radius:10px; padding:22px;
+    box-shadow:0 1px 0 rgba(255,255,255,0.5) inset;
+  }
+  .progress-line{
+    display:flex; justify-content:space-between; align-items:center;
+    font-size:0.78rem; color:var(--ink-faint); margin-bottom:14px;
+  }
+
+  .prompt-box{
+    display:flex; align-items:center; justify-content:center; gap:14px;
+    flex-wrap:wrap;
+    min-height:84px;
+    text-align:center;
+    margin-bottom:22px;
+  }
+  .prompt-big{font-family:'Noto Serif SC',serif; font-size:2.6rem; font-weight:600; line-height:1;}
+  .prompt-py{font-size:1.05rem; color:var(--ink-soft);}
+  .speak-btn{
+    width:40px; height:40px; border-radius:50%; border:1.5px solid var(--ink);
+    background:var(--cream); display:flex; align-items:center; justify-content:center;
+    cursor:pointer; flex:none; transition:all .15s ease;
+  }
+  .speak-btn:hover{background:var(--ink); }
+  .speak-btn:hover svg{fill:var(--cream);}
+  .speak-btn svg{width:18px; height:18px; fill:var(--ink);}
+  .speak-btn:focus-visible{outline:2px solid var(--seal); outline-offset:2px;}
+
+  .options{display:grid; grid-template-columns:repeat(2, 1fr); gap:10px; margin-bottom:18px;}
+  @media(max-width:480px){.options{grid-template-columns:1fr;}}
+  .opt-btn{
+    font-family:'Inter',sans-serif; font-size:0.95rem; font-weight:500;
+    padding:13px 16px; border-radius:8px; border:1.5px solid var(--line);
+    background:var(--paper); color:var(--ink); cursor:pointer; text-align:center;
+    transition:all .12s ease;
+  }
+  .opt-btn .hanzi{font-size:1.15rem;}
+  .opt-btn:hover:not(:disabled){border-color:var(--ink); transform:translateY(-1px);}
+  .opt-btn:focus-visible{outline:2px solid var(--seal); outline-offset:2px;}
+  .opt-btn:disabled{cursor:default;}
+  .opt-btn.correct{background:rgba(95,122,92,0.18); border-color:var(--bamboo); color:var(--bamboo);}
+  .opt-btn.wrong{background:rgba(179,56,44,0.13); border-color:var(--seal); color:var(--seal-dark);}
+
+  .feedback{
+    min-height:24px; font-size:0.88rem; font-weight:600; margin-bottom:14px; text-align:center;
+  }
+  .feedback.ok{color:var(--bamboo);}
+  .feedback.bad{color:var(--seal-dark);}
+
+  .actions{display:flex; justify-content:center; gap:10px;}
+  .btn{
+    font-family:'Inter',sans-serif; font-size:0.85rem; font-weight:600;
+    padding:10px 22px; border-radius:999px; border:none; cursor:pointer;
+    background:var(--ink); color:var(--cream);
+    transition:all .15s ease;
+  }
+  .btn:hover{background:var(--seal-dark);}
+  .btn.ghost{background:transparent; color:var(--ink-soft); border:1.5px solid var(--line);}
+  .btn.ghost:hover{border-color:var(--ink); color:var(--ink); background:transparent;}
+  .btn:focus-visible{outline:2px solid var(--seal); outline-offset:2px;}
+
+  .done-box{text-align:center; padding:18px 0;}
+  .done-box .hanzi{font-size:2rem; margin-bottom:6px;}
+  .done-box p{color:var(--ink-soft); font-size:0.92rem;}
+
+  /* vocab flashcards */
+  .flash-grid{display:grid; grid-template-columns:repeat(3,1fr); gap:10px; margin-bottom:24px;}
+  @media(max-width:600px){.flash-grid{grid-template-columns:repeat(2,1fr);}}
+  .flash{
+    border:1.5px solid var(--line); border-radius:8px; background:var(--paper);
+    padding:14px 8px; text-align:center; cursor:pointer; min-height:92px;
+    display:flex; flex-direction:column; align-items:center; justify-content:center; gap:3px;
+    transition:all .15s ease; position:relative;
+  }
+  .flash:hover{border-color:var(--ink);}
+  .flash .hz{font-family:'Noto Serif SC',serif; font-size:1.5rem; font-weight:600;}
+  .flash .py{font-size:0.78rem; color:var(--ink-soft); display:none;}
+  .flash .id{font-size:0.74rem; color:var(--seal-dark); display:none; margin-top:1px;}
+  .flash.flipped .py, .flash.flipped .id{display:block;}
+  .flash.flipped .hz{font-size:1.1rem; color:var(--ink-faint);}
+  .flash-hint{text-align:center; font-size:0.78rem; color:var(--ink-faint); margin:-14px 0 22px;}
+
+  .divider{border:none; border-top:1px dashed var(--line); margin:32px 0;}
+
+  .dialog-demo{
+    display:flex; flex-direction:column; gap:12px; margin-bottom:26px;
+  }
+  .dline{display:flex; align-items:center; gap:12px;}
+  .dtag{
+    width:26px; height:26px; border-radius:50%; flex:none;
+    background:var(--ink); color:var(--cream); font-size:0.78rem; font-weight:700;
+    display:flex; align-items:center; justify-content:center;
+  }
+  .dtext{font-family:'Noto Serif SC',serif; font-size:1.3rem;}
+  .dpy{font-size:0.82rem; color:var(--ink-soft); margin-left:6px;}
+
+  footer{
+    text-align:center; font-size:0.74rem; color:var(--ink-faint);
+    padding:20px; border-top:1px solid var(--line);
+  }
+
+  .match-pair{
+    display:flex; align-items:center; justify-content:space-between;
+    border:1.5px solid var(--line); border-radius:8px; padding:13px 16px; margin-bottom:9px;
+    background:var(--paper);
+  }
+  .match-pair .hz{font-family:'Noto Serif SC',serif; font-size:1.2rem;}
+  .match-pair select{
+    font-family:'Inter',sans-serif; font-size:0.85rem; padding:6px 8px;
+    border-radius:6px; border:1.5px solid var(--line); background:var(--cream); color:var(--ink);
+  }
+  .check-row{text-align:center; margin-top:16px;}
+</style>
+</head>
+<body>
+
+<div class="topbar">
+  <div class="topbar-inner">
+    <div class="brandblock">
+      <span class="hanzi">你好</span>
+      <div>
+        <div class="sub" style="font-weight:700; color:var(--ink); font-size:0.8rem;">第一课 · Lesson 1</div>
+        <div class="sub">Latihan Interaktif — 汉语教程 Buku 1</div>
+      </div>
+    </div>
+    <div class="seal-wrap">
+      <div class="score-text">Skor total<br><b id="scoreText">0 / 0</b></div>
+      <div class="seal" id="seal">好</div>
+    </div>
+  </div>
+  <div class="tabs">
+    <button class="tab-btn active" data-tab="phonics">㊀ 声母韵母 Bunyi</button>
+    <button class="tab-btn" data-tab="tones">㊁ 声调 Nada</button>
+    <button class="tab-btn" data-tab="vocab">㊂ 生词 Kosakata</button>
+    <button class="tab-btn" data-tab="dialog">㊃ 课文 Dialog</button>
+  </div>
+</div>
+
+<main>
+  <div class="intro">
+    Latihan ini mengikuti isi <b>Bab 1 "你好" (Nǐ hǎo)</b> dari buku <i>汉语教程 (Hanyu Jiaocheng)</i> Jilid 1 — meliputi 11 声母 (konsonan awal), 10+3 韵母 (bunyi akhir), 4 nada, 11 kosakata, dan dialog pembuka. Tombol 🔊 memutar suara menggunakan suara Mandarin bawaan browser (Web Speech API) — jika perangkatmu tidak memiliki suara Mandarin, abaikan saja dan baca pinyinnya. Setiap jawaban benar akan "menstempel" 印章 di kanan atas.
+  </div>
+
+  <!-- ============ PANEL 1: PHONICS ============ -->
+  <section class="panel active" data-panel="phonics">
+    <div class="section-head">
+      <div class="num">1</div>
+      <h2>Bunyi Awal &amp; Akhir</h2>
+      <span class="hanzi-tag hanzi">声母韵母</span>
+    </div>
+    <p class="section-desc">11 声母: b p m f d t n l g k h &nbsp;·&nbsp; 韵母: a o e i u ü ai ei ao ou. Dengarkan suku kata, lalu pilih ejaan pinyin yang tepat.</p>
+    <div class="card">
+      <div class="progress-line"><span id="ph-progress">Soal 1 / 8</span><span id="ph-score">Benar: 0</span></div>
+      <div class="prompt-box">
+        <button class="speak-btn" onclick="PH.play()" aria-label="Putar suara"><svg viewBox="0 0 24 24"><path d="M3 9v6h4l5 5V4L7 9H3zm13.5 3c0-1.77-1-3.29-2.5-4.03v8.05c1.5-.73 2.5-2.25 2.5-4.02zM14 3.23v2.06c2.89.86 5 3.54 5 6.71s-2.11 5.85-5 6.71v2.06c4.01-.91 7-4.49 7-8.77s-2.99-7.86-7-8.77z"/></svg></button>
+        <div class="prompt-big" id="ph-display">?</div>
+      </div>
+      <div class="options" id="ph-options"></div>
+      <div class="feedback" id="ph-feedback"></div>
+      <div class="actions" id="ph-actions"></div>
+    </div>
+  </section>
+
+  <!-- ============ PANEL 2: TONES ============ -->
+  <section class="panel" data-panel="tones">
+    <div class="section-head">
+      <div class="num">2</div>
+      <h2>Nada</h2>
+      <span class="hanzi-tag hanzi">声调</span>
+    </div>
+    <p class="section-desc">第一声 ā (rata) · 第二声 á (naik) · 第三声 ǎ (turun-naik) · 第四声 à (turun tegas). Dengarkan suku kata bernada, lalu pilih nada yang benar.</p>
+    <div class="card">
+      <div class="progress-line"><span id="tn-progress">Soal 1 / 8</span><span id="tn-score">Benar: 0</span></div>
+      <div class="prompt-box">
+        <button class="speak-btn" onclick="TN.play()" aria-label="Putar suara"><svg viewBox="0 0 24 24"><path d="M3 9v6h4l5 5V4L7 9H3zm13.5 3c0-1.77-1-3.29-2.5-4.03v8.05c1.5-.73 2.5-2.25 2.5-4.02zM14 3.23v2.06c2.89.86 5 3.54 5 6.71s-2.11 5.85-5 6.71v2.06c4.01-.91 7-4.49 7-8.77s-2.99-7.86-7-8.77z"/></svg></button>
+        <div class="prompt-big" id="tn-display">?</div>
+      </div>
+      <div class="options" id="tn-options"></div>
+      <div class="feedback" id="tn-feedback"></div>
+      <div class="actions" id="tn-actions"></div>
+    </div>
+  </section>
+
+  <!-- ============ PANEL 3: VOCAB ============ -->
+  <section class="panel" data-panel="vocab">
+    <div class="section-head">
+      <div class="num">3</div>
+      <h2>Kosakata</h2>
+      <span class="hanzi-tag hanzi">生词</span>
+    </div>
+    <p class="section-desc">11 kosakata Bab 1. Klik kartu untuk membuka arti, lalu uji dirimu di bawah.</p>
+    <div class="flash-grid" id="flash-grid"></div>
+    <div class="flash-hint">↑ klik kartu untuk membuka / menutup</div>
+
+    <div class="card">
+      <div class="progress-line"><span id="vc-progress">Soal 1 / 10</span><span id="vc-score">Benar: 0</span></div>
+      <div class="prompt-box">
+        <button class="speak-btn" onclick="VC.play()" aria-label="Putar suara"><svg viewBox="0 0 24 24"><path d="M3 9v6h4l5 5V4L7 9H3zm13.5 3c0-1.77-1-3.29-2.5-4.03v8.05c1.5-.73 2.5-2.25 2.5-4.02zM14 3.23v2.06c2.89.86 5 3.54 5 6.71s-2.11 5.85-5 6.71v2.06c4.01-.91 7-4.49 7-8.77s-2.99-7.86-7-8.77z"/></svg></button>
+        <div class="prompt-big" id="vc-display">?</div>
+      </div>
+      <div class="options" id="vc-options"></div>
+      <div class="feedback" id="vc-feedback"></div>
+      <div class="actions" id="vc-actions"></div>
+    </div>
+  </section>
+
+  <!-- ============ PANEL 4: DIALOG ============ -->
+  <section class="panel" data-panel="dialog">
+    <div class="section-head">
+      <div class="num">4</div>
+      <h2>Dialog</h2>
+      <span class="hanzi-tag hanzi">课文</span>
+    </div>
+    <p class="section-desc">Dialog pembuka Bab 1 — sapaan paling dasar dalam bahasa Mandarin.</p>
+
+    <div class="dialog-demo">
+      <div class="dline">
+        <div class="dtag">A</div>
+        <div class="dtext">你 好 ！</div><div class="dpy">Nǐ hǎo!</div>
+        <button class="speak-btn" style="margin-left:auto" onclick="speak('你好')" aria-label="Putar"><svg viewBox="0 0 24 24"><path d="M3 9v6h4l5 5V4L7 9H3zm13.5 3c0-1.77-1-3.29-2.5-4.03v8.05c1.5-.73 2.5-2.25 2.5-4.02zM14 3.23v2.06c2.89.86 5 3.54 5 6.71s-2.11 5.85-5 6.71v2.06c4.01-.91 7-4.49 7-8.77s-2.99-7.86-7-8.77z"/></svg></button>
+      </div>
+      <div class="dline">
+        <div class="dtag">B</div>
+        <div class="dtext">你 好 ！</div><div class="dpy">Nǐ hǎo!</div>
+        <button class="speak-btn" style="margin-left:auto" onclick="speak('你好')" aria-label="Putar"><svg viewBox="0 0 24 24"><path d="M3 9v6h4l5 5V4L7 9H3zm13.5 3c0-1.77-1-3.29-2.5-4.03v8.05c1.5-.73 2.5-2.25 2.5-4.02zM14 3.23v2.06c2.89.86 5 3.54 5 6.71s-2.11 5.85-5 6.71v2.06c4.01-.91 7-4.49 7-8.77s-2.99-7.86-7-8.77z"/></svg></button>
+      </div>
+    </div>
+
+    <p class="section-desc" style="margin-bottom:10px;">Bab 1 juga mengajarkan beberapa gabungan dua-kata sederhana dengan kosakata yang sudah dipelajari. Cocokkan setiap kata dengan artinya:</p>
+    <div class="card">
+      <div id="dg-pairs"></div>
+      <div class="check-row">
+        <button class="btn" onclick="DG.check()">Cek Jawaban</button>
+        <button class="btn ghost" onclick="DG.reset()">Ulangi</button>
+      </div>
+      <div class="feedback" id="dg-feedback" style="margin-top:12px;"></div>
+    </div>
+  </section>
+</main>
+
+<footer>
+  Disusun berdasarkan isi 第一课「你好」— 汉语教程 (Hanyu Jiaocheng) Jilid 1, 杨寄洲 主编 · Latihan ini dibuat untuk membantu belajar mandiri, bukan pengganti buku aslinya.
+</footer>
+
+<script>
+/* ================= GLOBAL ================= */
+const SCORE = {correct:0, total:0};
+function bump(isCorrect){
+  SCORE.total++; if(isCorrect) SCORE.correct++;
+  document.getElementById('scoreText').textContent = SCORE.correct + ' / ' + SCORE.total;
+  if(isCorrect){
+    const seal = document.getElementById('seal');
+    seal.classList.remove('stamped');
+    void seal.offsetWidth;
+    seal.classList.add('stamped');
+    setTimeout(()=>seal.classList.remove('stamped'), 320);
+  }
+}
+function shuffle(arr){ const a=arr.slice(); for(let i=a.length-1;i>0;i--){ const j=Math.floor(Math.random()*(i+1)); [a[i],a[j]]=[a[j],a[i]]; } return a; }
+function sample(arr,n){ return shuffle(arr).slice(0,n); }
+function pickDistractors(pool, correct, n){
+  const others = pool.filter(x=>x!==correct);
+  return sample(others, n);
+}
+
+let zhVoice = null;
+function loadVoice(){
+  const voices = window.speechSynthesis ? window.speechSynthesis.getVoices() : [];
+  zhVoice = voices.find(v=>v.lang && v.lang.toLowerCase().startsWith('zh')) || null;
+}
+if(window.speechSynthesis){
+  loadVoice();
+  window.speechSynthesis.onvoiceschanged = loadVoice;
+}
+function speak(text){
+  if(!window.speechSynthesis) return;
+  window.speechSynthesis.cancel();
+  const u = new SpeechSynthesisUtterance(text);
+  u.lang = 'zh-CN';
+  if(zhVoice) u.voice = zhVoice;
+  u.rate = 0.85;
+  window.speechSynthesis.speak(u);
+}
+
+/* ================= TABS ================= */
+document.querySelectorAll('.tab-btn').forEach(btn=>{
+  btn.addEventListener('click', ()=>{
+    document.querySelectorAll('.tab-btn').forEach(b=>b.classList.remove('active'));
+    document.querySelectorAll('.panel').forEach(p=>p.classList.remove('active'));
+    btn.classList.add('active');
+    document.querySelector('.panel[data-panel="'+btn.dataset.tab+'"]').classList.add('active');
+  });
+});
+
+/* ================= SECTION 1: PHONICS ================= */
+const PHONICS_TABLE = {
+  b:['a','o','i','u','ai','ei','ao'],
+  p:['a','o','i','u','ai','ei','ao','ou'],
+  m:['a','o','e','i','u','ai','ei','ao','ou'],
+  f:['a','o','u','ei','ou'],
+  d:['a','e','i','u','ai','ei','ao','ou'],
+  t:['a','e','i','u','ai','ao','ou'],
+  n:['a','e','i','u','ü','ai','ei','ao','ou'],
+  l:['a','e','i','u','ü','ai','ei','ao','ou'],
+  g:['a','e','u','ai','ei','ao','ou'],
+  k:['a','e','u','ai','ei','ao','ou'],
+  h:['a','e','u','ai','ei','ao','ou']
+};
+const ZERO_INITIAL = ['yi','wu','yu']; // standalone i/u/ü forms
+
+function buildPhonicsPool(){
+  const pool = [];
+  for(const ini in PHONICS_TABLE){
+    PHONICS_TABLE[ini].forEach(fin=>{
+      let syll = ini + fin;
+      // orthographic fix: nu/lü keep umlaut already in fin
+      pool.push(syll);
+    });
+  }
+  ZERO_INITIAL.forEach(s=>pool.push(s));
+  return pool;
+}
+const PHONICS_POOL = buildPhonicsPool();
+
+const PH = {
+  qs: [], idx: 0, correct: 0,
+  init(){
+    this.qs = sample(PHONICS_POOL, 8);
+    this.idx = 0; this.correct = 0;
+    this.render();
+  },
+  current(){ return this.qs[this.idx]; },
+  play(){ speak(this.current()); },
+  render(){
+    document.getElementById('ph-progress').textContent = 'Soal ' + (this.idx+1) + ' / ' + this.qs.length;
+    document.getElementById('ph-score').textContent = 'Benar: ' + this.correct;
+    document.getElementById('ph-display').textContent = '🔊';
+    document.getElementById('ph-feedback').textContent = '';
+    document.getElementById('ph-feedback').className = 'feedback';
+    document.getElementById('ph-actions').innerHTML = '';
+    const correct = this.current();
+    const distractors = pickDistractors(PHONICS_POOL, correct, 3);
+    const opts = shuffle([correct, ...distractors]);
+    const wrap = document.getElementById('ph-options');
+    wrap.innerHTML = '';
+    opts.forEach(o=>{
+      const b = document.createElement('button');
+      b.className = 'opt-btn';
+      b.textContent = o;
+      b.onclick = ()=>this.answer(o, correct, b, wrap);
+      wrap.appendChild(b);
+    });
+    this.play();
+  },
+  answer(picked, correct, btn, wrap){
+    const isCorrect = picked === correct;
+    wrap.querySelectorAll('button').forEach(b=>{
+      b.disabled = true;
+      if(b.textContent === correct) b.classList.add('correct');
+      else if(b===btn) b.classList.add('wrong');
+    });
+    const fb = document.getElementById('ph-feedback');
+    if(isCorrect){ this.correct++; fb.textContent='✅ Benar!'; fb.className='feedback ok'; }
+    else { fb.textContent='❌ Yang benar: ' + correct; fb.className='feedback bad'; }
+    bump(isCorrect);
+    document.getElementById('ph-score').textContent = 'Benar: ' + this.correct;
+    const actions = document.getElementById('ph-actions');
+    if(this.idx < this.qs.length-1){
+      const nb = document.createElement('button');
+      nb.className='btn'; nb.textContent='Soal Berikutnya →';
+      nb.onclick = ()=>{ this.idx++; this.render(); };
+      actions.appendChild(nb);
+    } else {
+      const summary = document.createElement('div');
+      summary.className='done-box';
+      summary.innerHTML = '<div class="hanzi">完 成！</div><p>Selesai — '+this.correct+' dari '+this.qs.length+' benar.</p>';
+      document.getElementById('ph-options').after(summary);
+      const rb = document.createElement('button');
+      rb.className='btn'; rb.textContent='Ulangi Latihan ↺';
+      rb.onclick = ()=>{ summary.remove(); this.init(); };
+      actions.appendChild(rb);
+    }
+  }
+};
+
+/* ================= SECTION 2: TONES ================= */
+const TONE_BANK = {
+  yi:['yī','yí','yǐ','yì'],
+  wu:['wū','wú','wǔ','wù'],
+  yu:['yū','yú','yǔ','yù'],
+  ba:['bā','bá','bǎ','bà'],
+  da:['dā','dá','dǎ','dà'],
+  bu:['bū','bú','bǔ','bù'],
+  nv:['nǖ','nǘ','nǚ','nǜ'],
+  kou:['kōu','kóu','kǒu','kòu'],
+  bai:['bāi','bái','bǎi','bài'],
+  hei:['hēi','héi','hěi','hèi'],
+  ma:['mā','má','mǎ','mà'],
+  ni:['nī','ní','nǐ','nì'],
+  hao:['hāo','háo','hǎo','hào']
+};
+const TONE_LABELS = ['第一声 (ˉ)','第二声 (ˊ)','第三声 (ˇ)','第四声 (ˋ)'];
+
+const TN = {
+  qs: [], idx: 0, correct: 0,
+  init(){
+    const bases = Object.keys(TONE_BANK);
+    const chosen = sample(bases, 8);
+    this.qs = chosen.map(b=>{
+      const toneIdx = Math.floor(Math.random()*4);
+      return { syll: TONE_BANK[b][toneIdx], answer: toneIdx };
+    });
+    this.idx = 0; this.correct = 0;
+    this.render();
+  },
+  current(){ return this.qs[this.idx]; },
+  play(){ speak(this.current().syll); },
+  render(){
+    document.getElementById('tn-progress').textContent = 'Soal ' + (this.idx+1) + ' / ' + this.qs.length;
+    document.getElementById('tn-score').textContent = 'Benar: ' + this.correct;
+    document.getElementById('tn-display').textContent = '🔊';
+    document.getElementById('tn-feedback').textContent = '';
+    document.getElementById('tn-feedback').className = 'feedback';
+    document.getElementById('tn-actions').innerHTML = '';
+    const wrap = document.getElementById('tn-options');
+    wrap.innerHTML = '';
+    TONE_LABELS.forEach((label, i)=>{
+      const b = document.createElement('button');
+      b.className = 'opt-btn';
+      b.textContent = label;
+      b.onclick = ()=>this.answer(i, b, wrap);
+      wrap.appendChild(b);
+    });
+    this.play();
+  },
+  answer(picked, btn, wrap){
+    const correct = this.current().answer;
+    const isCorrect = picked === correct;
+    wrap.querySelectorAll('button').forEach((b,i)=>{
+      b.disabled = true;
+      if(i === correct) b.classList.add('correct');
+      else if(b===btn) b.classList.add('wrong');
+    });
+    const fb = document.getElementById('tn-feedback');
+    if(isCorrect){ this.correct++; fb.textContent='✅ Benar! '+this.current().syll; fb.className='feedback ok'; }
+    else { fb.textContent='❌ Suku kata: '+this.current().syll+' — '+TONE_LABELS[correct]; fb.className='feedback bad'; }
+    bump(isCorrect);
+    document.getElementById('tn-score').textContent = 'Benar: ' + this.correct;
+    const actions = document.getElementById('tn-actions');
+    if(this.idx < this.qs.length-1){
+      const nb = document.createElement('button');
+      nb.className='btn'; nb.textContent='Soal Berikutnya →';
+      nb.onclick = ()=>{ this.idx++; this.render(); };
+      actions.appendChild(nb);
+    } else {
+      const summary = document.createElement('div');
+      summary.className='done-box';
+      summary.innerHTML = '<div class="hanzi">完 成！</div><p>Selesai — '+this.correct+' dari '+this.qs.length+' benar.</p>';
+      document.getElementById('tn-options').after(summary);
+      const rb = document.createElement('button');
+      rb.className='btn'; rb.textContent='Ulangi Latihan ↺';
+      rb.onclick = ()=>{ summary.remove(); this.init(); };
+      actions.appendChild(rb);
+    }
+  }
+};
+
+/* ================= SECTION 3: VOCAB ================= */
+const VOCAB = [
+  {hz:'你', py:'nǐ', id:'kamu'},
+  {hz:'好', py:'hǎo', id:'baik, bagus'},
+  {hz:'你好', py:'nǐ hǎo', id:'halo!'},
+  {hz:'一', py:'yī', id:'satu'},
+  {hz:'五', py:'wǔ', id:'lima'},
+  {hz:'八', py:'bā', id:'delapan'},
+  {hz:'大', py:'dà', id:'besar'},
+  {hz:'不', py:'bù', id:'tidak'},
+  {hz:'口', py:'kǒu', id:'mulut'},
+  {hz:'白', py:'bái', id:'putih'},
+  {hz:'女', py:'nǚ', id:'perempuan'},
+  {hz:'马', py:'mǎ', id:'kuda'}
+];
+
+function buildFlashGrid(){
+  const grid = document.getElementById('flash-grid');
+  grid.innerHTML = '';
+  VOCAB.forEach(v=>{
+    const card = document.createElement('div');
+    card.className = 'flash';
+    card.innerHTML = '<div class="hz">'+v.hz+'</div><div class="py">'+v.py+'</div><div class="id">'+v.id+'</div>';
+    card.onclick = ()=>{ card.classList.toggle('flipped'); speak(v.hz); };
+    grid.appendChild(card);
+  });
+}
+buildFlashGrid();
+
+const VC = {
+  qs: [], idx: 0, correct: 0,
+  init(){
+    this.qs = sample(VOCAB, 10);
+    this.idx = 0; this.correct = 0;
+    this.render();
+  },
+  current(){ return this.qs[this.idx]; },
+  play(){ speak(this.current().hz); },
+  render(){
+    document.getElementById('vc-progress').textContent = 'Soal ' + (this.idx+1) + ' / ' + this.qs.length;
+    document.getElementById('vc-score').textContent = 'Benar: ' + this.correct;
+    document.getElementById('vc-feedback').textContent = '';
+    document.getElementById('vc-feedback').className = 'feedback';
+    document.getElementById('vc-actions').innerHTML = '';
+    const item = this.current();
+    document.getElementById('vc-display').innerHTML = '<span class="hanzi">'+item.hz+'</span>';
+    const distractors = pickDistractors(VOCAB, item, 3).map(v=>v.id);
+    const opts = shuffle([item.id, ...distractors]);
+    const wrap = document.getElementById('vc-options');
+    wrap.innerHTML = '';
+    opts.forEach(o=>{
+      const b = document.createElement('button');
+      b.className = 'opt-btn';
+      b.textContent = o;
+      b.onclick = ()=>this.answer(o, item.id, b, wrap);
+      wrap.appendChild(b);
+    });
+    this.play();
+  },
+  answer(picked, correct, btn, wrap){
+    const isCorrect = picked === correct;
+    wrap.querySelectorAll('button').forEach(b=>{
+      b.disabled = true;
+      if(b.textContent === correct) b.classList.add('correct');
+      else if(b===btn) b.classList.add('wrong');
+    });
+    const fb = document.getElementById('vc-feedback');
+    if(isCorrect){ this.correct++; fb.textContent='✅ Benar! '+this.current().py; fb.className='feedback ok'; }
+    else { fb.textContent='❌ Yang benar: '+correct+' ('+this.current().py+')'; fb.className='feedback bad'; }
+    bump(isCorrect);
+    document.getElementById('vc-score').textContent = 'Benar: ' + this.correct;
+    const actions = document.getElementById('vc-actions');
+    if(this.idx < this.qs.length-1){
+      const nb = document.createElement('button');
+      nb.className='btn'; nb.textContent='Soal Berikutnya →';
+      nb.onclick = ()=>{ this.idx++; this.render(); };
+      actions.appendChild(nb);
+    } else {
+      const summary = document.createElement('div');
+      summary.className='done-box';
+      summary.innerHTML = '<div class="hanzi">完 成！</div><p>Selesai — '+this.correct+' dari '+this.qs.length+' benar.</p>';
+      document.getElementById('vc-options').after(summary);
+      const rb = document.createElement('button');
+      rb.className='btn'; rb.textContent='Ulangi Latihan ↺';
+      rb.onclick = ()=>{ summary.remove(); this.init(); };
+      actions.appendChild(rb);
+    }
+  }
+};
+
+/* ================= SECTION 4: DIALOG MATCHING ================= */
+const COMBOS = [
+  {hz:'你好', id:'halo'},
+  {hz:'不好', id:'tidak baik'},
+  {hz:'大马', id:'kuda besar'},
+  {hz:'白马', id:'kuda putih'},
+  {hz:'不大', id:'tidak besar'},
+  {hz:'不白', id:'tidak putih'}
+];
+const DG = {
+  init(){
+    const wrap = document.getElementById('dg-pairs');
+    wrap.innerHTML = '';
+    const idOptions = COMBOS.map(c=>c.id);
+    shuffle(COMBOS).forEach((c, i)=>{
+      const row = document.createElement('div');
+      row.className = 'match-pair';
+      row.dataset.answer = c.id;
+      const opts = shuffle(idOptions);
+      row.innerHTML = '<span class="hz">'+c.hz+'</span>'+
+        '<select>'+
+          '<option value="">— pilih arti —</option>'+
+          opts.map(o=>'<option value="'+o+'">'+o+'</option>').join('')+
+        '</select>';
+      wrap.appendChild(row);
+    });
+    document.getElementById('dg-feedback').textContent = '';
+  },
+  check(){
+    const rows = document.querySelectorAll('.match-pair');
+    let correctCount = 0;
+    rows.forEach(row=>{
+      const sel = row.querySelector('select');
+      const ok = sel.value === row.dataset.answer;
+      if(ok) correctCount++;
+      sel.style.borderColor = sel.value ? (ok ? 'var(--bamboo)' : 'var(--seal)') : 'var(--line)';
+    });
+    const fb = document.getElementById('dg-feedback');
+    fb.className = correctCount === rows.length ? 'feedback ok' : 'feedback bad';
+    fb.textContent = correctCount + ' dari ' + rows.length + ' benar.';
+    for(let i=0;i<rows.length;i++) bump(rows[i].querySelector('select').value === rows[i].dataset.answer);
+  },
+  reset(){ this.init(); }
+};
+
+/* ================= INIT ALL ================= */
+PH.init();
+TN.init();
+VC.init();
+DG.init();
+</script>
+</body>
+</html>
